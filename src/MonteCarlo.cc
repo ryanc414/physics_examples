@@ -1,71 +1,87 @@
+// Find an aproximate value to the following integral numerically:
+//
+// 10^6 * Integrate(sin(x_0 + x_1 + x_2 + x_3 + x_4 + x_5 + x_6 + x_7)
+//                  dx_0 dx_1 dx_2 dx_2 dx_3 dx_4 dx_5 dx_6 dx_7)
+// With all integration variables taking values from 0 to S = pi/8.
+//
+// Use Monte-Carlo estimation to sample pseudo-random points over the 8D
+// integral space and provide an estimate for the integral value and error.
+
 #include <iostream>
 #include <cmath>
 #include <gsl/gsl_rng.h>
 #include <vector>
 
-double IntEst(int N, gsl_rng*& rng)
-{
-double pi = 3.14159265359;
-double s = pi/8;
-double V = pow(s,8);
-double fsum = 0.0;
-std::vector<double> r(8);
-double result;
+#define N_DIMENSIONS 8
+#define S M_PI/N_DIMENSIONS
+#define V pow(S, N_DIMENSIONS)
+#define PRE_CONST pow(10, 6)
 
-for(int i = 0; i<N; i++)
+// Stores an estimated value and approximate error.
+typedef struct estimate
+{
+    double value;
+    double error;
+} ESTIMATE;
+
+// Function prototypes
+void estimate_integral(ESTIMATE *result,
+                       gsl_rng* rng,
+                       int n_samples,
+                       double (*integrand)(double *));
+double integrand(double *x);
+
+int main(void)
+{
+    gsl_rng* rng = gsl_rng_alloc(gsl_rng_default);
+    ESTIMATE result;
+
+    estimate_integral(&result, rng, 100, integrand);
+    result.value *= PRE_CONST;
+    result.error *= PRE_CONST;
+
+    std::cout << result.value << "\t" << result.error << "\n";
+
+    return 0;
+}
+
+void estimate_integral(ESTIMATE *result,
+                       gsl_rng* rng,
+                       int n_samples,
+                       double (*integrand)(double *))
+{
+    double x[N_DIMENSIONS];
+    double f;
+    double f_sum = 0.0;
+    double f_sq_sum = 0.0;
+    double f_average;
+    double f_sq_average;
+
+    for (int ii = 0; ii < n_samples; ii++)
     {
-      for(int j = 0; j<8; j++)
-	{
-	  r[j] = s * gsl_rng_uniform(rng);
-	  //generate random points in 8D space within integration limits
-	}
-      fsum += sin(r[0]+r[1]+r[2]+r[3]+r[4]+r[5]+r[6]+r[7]);
-      //running total of intergrand
+        // Generate random points in 8D space within integration limits.
+        for (int jj = 0; jj < 8; jj++)
+        {
+            x[jj] = S * gsl_rng_uniform(rng);
+        }
+
+        // Update running total of intergrand.
+        f = integrand(x);
+        f_sum += f;
+        f_sq_sum += f * f;
     }
-result = fsum/N * V;
-//fsum/N is the mean value of f; multiplying by V estimates the integral
-return pow(10,6) * result;
+    
+    // Calculate the average of f and of f squared.
+    f_average = (f_sum / n_samples);
+    f_sq_average = (f_sq_sum / n_samples);
+
+    // Store the estimated value and error in the result struct.
+    result->value = V * f_average;
+    result->error = V * sqrt((f_sq_average - (f_average * f_average)) / n_samples);
 }
 
-int main()
+double integrand(double *x)
 {
- int nt = 25;
- int n = 7;
- double IntVal;
- double IntSum = 0;
- double SqSum = 0;
- int N;
- std::vector<double> mean(n);
- std::vector<double> error(n);
-
- gsl_rng* rng = gsl_rng_alloc( gsl_rng_default );
- 
- for(int i = 0; i < n; i++)
-   {
-     N = pow(10,i+1);
-     IntSum = 0;
-     SqSum = 0;
-     //initialise sums to 0 each iteration
-
-     for(int j = 0; j < nt; j++)
-       {
-	 IntVal = IntEst(N,rng);
-	 IntSum += IntVal;
-	 SqSum += IntVal * IntVal;
-	 //estimate integral and keep running sum of the estimates and squares
-       }
-     mean[i] = IntSum / nt;
-     error[i] = sqrt(SqSum/nt - (IntSum/nt)*(IntSum/nt));
-     //for each value of N output the mean and std dev into seperate arrays
-   }
-
- for(int i = 0; i < n; i++)
-   {
-     std::cout << pow(10,i+1) << "\t" << i+1 << "\t" <<  mean[i] << "\t" << error[i] << "\t" << log10(error[i]) << "\n";
-   }
- //outputs N, log(N), mean and error of integral, and log(error) seperated by tabs
-
- gsl_rng_free( rng );
- return 0;
-
+    return sin(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]+x[6]+x[7]);
 }
+
