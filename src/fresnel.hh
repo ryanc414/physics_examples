@@ -3,7 +3,7 @@
 #include <cmath>
 #include <gsl/gsl_integration.h>
 #include <vector>
-#include "monte_carlo.hh"
+#include "estimate.hh"
 
 #define PI 3.14159265359
 #define EPSREL 1e-7
