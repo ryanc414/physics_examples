@@ -3,6 +3,7 @@
 #include <cmath>
 #include <gsl/gsl_integration.h>
 #include <vector>
+#include <assert.h>
 #include "estimate.hh"
 
 #define PI 3.14159265359
@@ -14,6 +15,6 @@
 double c(double x, void *params);
 double s(double x, void *params);
 void fresnel_integrate(ESTIMATE *estimates,
-                       std::vector<double> u_limits,
+                       const std::vector<double> &u_limits,
                        gsl_integration_workspace *workspace);
 

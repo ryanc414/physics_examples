@@ -13,11 +13,13 @@ double s(double x, void *params)
 }
 
 void fresnel_integrate(ESTIMATE *estimates,
-                       std::vector<double> u_limits,
+                       const std::vector<double> &u_limits,
                        gsl_integration_workspace *workspace)
 {
     gsl_function func_c;
     gsl_function func_s;
+
+    assert(u_limits.size() == 2);
   
     // Integrate functions c and s using GSL routine.
     func_c.function = &c;

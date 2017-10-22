@@ -10,6 +10,7 @@
 #include <cmath>
 #include <gsl/gsl_rng.h>
 #include <vector>
+#include <assert.h>
 #include "estimate.hh"
 
 #define N_DIMENSIONS 8
@@ -20,8 +21,8 @@
 void estimate_integral(ESTIMATE *result,
                        gsl_rng* rng,
                        int n_samples,
-                       double (*integrand)(double *));
-double integrand(double *x);
+                       double (*integrand)(const std::vector<double> &));
+double integrand(const std::vector<double> &x);
 
 int main(void)
 {
@@ -38,8 +39,9 @@ int main(void)
 }
 
 // The function to be integrated numerically.
-double integrand(double *x)
+double integrand(const std::vector<double> &x)
 {
+    assert(x.size() == N_DIMENSIONS);
     return sin(x[0]+x[1]+x[2]+x[3]+x[4]+x[5]+x[6]+x[7]);
 }
 
@@ -47,9 +49,9 @@ double integrand(double *x)
 void estimate_integral(ESTIMATE *result,
                        gsl_rng* rng,
                        int n_samples,
-                       double (*integrand)(double *))
+                       double (*integrand)(const std::vector<double> &))
 {
-    double x[N_DIMENSIONS];
+    std::vector<double> x(N_DIMENSIONS);
     double f;
     double f_sum = 0.0;
     double f_sq_sum = 0.0;
