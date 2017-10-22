@@ -8,20 +8,21 @@ import csv_reader as csv
 
 DIRNAME = os.path.dirname(os.path.realpath(__file__))
 DISTANCES = (30, 50, 100)
-FILENAMES = ["{0}/../data/{1}cm_diffraction.csv".format(DIRNAME, d)
-             for d in DISTANCES]
+OUTPUT_FILENAMES = ["{0}/../data/{1}cm_diffraction.csv".format(DIRNAME, d)
+                    for d in DISTANCES]
 FIG_TITLES = ["{}cm Diffraction".format(d) for d in DISTANCES]
 
 
-def plot_diffraction_amplitudes():
-    """Plot the diffraction amplitudes."""
+def plot_diffraction_patterns():
+    """Plot the diffraction amplitudes and phases."""
     calculate_diffractions()
 
-    for i in range(len(FILENAMES)):
+    for i, output_filename in enumerate(OUTPUT_FILENAMES):
         plt.figure(i + 1)
-        x_vals, amplitudes, phases = get_diff_values(FILENAMES[i])
+        x_vals, amplitudes, phases = get_diff_values(output_filename)
         plt.suptitle(FIG_TITLES[i])
 
+        # Create two subplots - one for the amplitude, one for the phase.
         plt.subplot(121)
         plt.plot(x_vals, amplitudes, '-', linewidth=1)
         plt.xlabel("x")
@@ -36,8 +37,8 @@ def plot_diffraction_amplitudes():
 
 
 def calculate_diffractions():
-    """Calculate the Fresnel integral values, using the example binary.
-    Just return the values for the C and S integrals."""
+    """Calculate the values used to plot the diffraction patterns.
+    The executable will write these out to files under data/."""
     # Find the location of the binary relative to this script.
     binpath = DIRNAME + "/../bin/fresnel_diffraction"
 
@@ -46,6 +47,7 @@ def calculate_diffractions():
 
 
 def get_diff_values(output_filename):
+    """Get the required values from the given output CSV file."""
     with open(output_filename) as diff_file:
         diff_lines = diff_file.readlines()
 
@@ -54,5 +56,5 @@ def get_diff_values(output_filename):
 
 
 if __name__ == '__main__':
-    plot_diffraction_amplitudes()
+    plot_diffraction_patterns()
 
