@@ -1,4 +1,4 @@
-all: bin/monte_carlo_example bin/fresnel_example bin/fresnel_diffraction 
+all: bin/monte_carlo_example bin/fresnel_example bin/fresnel_diffraction
 
 bin/monte_carlo_example: src/monte_carlo.cc src/estimate.hh
 	g++ src/monte_carlo.cc -lgsl -lgslcblas -lm -Wall -g -Og -o bin/monte_carlo_example

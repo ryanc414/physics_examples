@@ -1,10 +1,11 @@
-// Find an aproximate value to the following integral numerically:
+// Finds an aproximate value to the following integral numerically:
 //
 // 10^6 * Integrate(sin(x_0 + x_1 + x_2 + x_3 + x_4 + x_5 + x_6 + x_7)
 //                  dx_0 dx_1 dx_2 dx_2 dx_3 dx_4 dx_5 dx_6 dx_7)
+//
 // With all integration variables taking values from 0 to S = pi/8.
 //
-// Use Monte-Carlo estimation to sample pseudo-random points over the 8D
+// Uses Monte-Carlo estimation to sample pseudo-random points over the 8D
 // integral space and provide an estimate for the integral value and error.
 #include <iostream>
 #include <cmath>
@@ -24,7 +25,7 @@ void estimate_integral(ESTIMATE *result,
                        double (*integrand)(const std::vector<double> &));
 double integrand(const std::vector<double> &x);
 
-int main(void)
+int main()
 {
     gsl_rng* rng = gsl_rng_alloc(gsl_rng_default);
     ESTIMATE result;
@@ -33,7 +34,8 @@ int main(void)
     result.value *= PRE_CONST;
     result.error *= PRE_CONST;
 
-    std::cout << result.value << "\t" << result.error << "\n";
+    std::cout << "Integral value = " << result.value <<
+                 ", error = " << result.error << std::endl;
 
     return 0;
 }
@@ -71,7 +73,7 @@ void estimate_integral(ESTIMATE *result,
         f_sum += f;
         f_sq_sum += f * f;
     }
-    
+
     // Calculate the average of f and of f squared.
     f_average = (f_sum / n_samples);
     f_sq_average = (f_sq_sum / n_samples);
