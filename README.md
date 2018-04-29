@@ -33,3 +33,9 @@ Apply Fresnel integrals to near-field diffraction of various sized
 appertures. CSV data is output to files under data/ from which
 diffraction patterns can be plotted.
 
+bin/driven_pendulum
+-------------------
+Simulate a driven pendulum by numerically solving a pair of ODEs
+representing the dynamics of the system. CSV data is output to file,
+from which the pendulum motion can be plotted.
+

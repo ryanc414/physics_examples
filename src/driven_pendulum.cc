@@ -3,10 +3,12 @@
 #include <gsl/gsl_odeiv2.h>
 #include <cmath>
 #include <iostream>
+#include <fstream>
 #include <cstdint>
+#include <cerrno>
 
 #define PI 3.14159265359
-#define N 10000000
+#define N 1000000
 #define OMEGA 2.0/3.0
 #define T_LIMIT 10 * 2 * PI
 #define AMPLITUDE 0.01
@@ -28,7 +30,7 @@ struct ParamsContainer
 
 int calc_odes(double t, const double *x, double *dxdt, void *vparams);
 int jac(double t, const double *x, double *dfdy, double *dfdt, void *vparams);
-void print_values(double *x, double t, double amplitude);
+void output_values(std::ofstream &out_file, double *x, double t, double amplitude);
 
 // Calculate the values of both ODEs for given t and x inputs.
 int calc_odes(double t, const double *x, double *dxdt, void *vparams)
@@ -45,7 +47,7 @@ int calc_odes(double t, const double *x, double *dxdt, void *vparams)
 int jac(double t, const double *x, double *dfdy, double *dfdt, void *vparams)
 {
     ParamsContainer *params = (ParamsContainer *)vparams;
-    gsl_matrix_view dfdy_mat; 
+    gsl_matrix_view dfdy_mat;
     gsl_matrix *m;
 
     dfdy_mat = gsl_matrix_view_array(dfdy, 2, 2);
@@ -71,13 +73,25 @@ int main()
     double x[] = {AMPLITUDE, 0.0};
     gsl_odeiv2_system sys;
     gsl_odeiv2_driver *driver;
+    std::ofstream out_file;
+    std::string out_filename;
+
+    std::cout << "Enter output filename: " << std::endl;
+    std::cin >> out_filename;
+
+    out_file.open(out_filename.c_str(), std::ios::out);
+    if (!out_file.is_open())
+    {
+      std::cerr << "Error, could not open specified file." << std::endl;
+      return EINVAL;
+    }
 
     // Define the ODE system for GSL and set the required precision.
     sys = {calc_odes, jac, 2, &params};
     driver = gsl_odeiv2_driver_alloc_y_new(&sys, gsl_odeiv2_step_rk8pd, 1e-6, 1e-6, 0.0);
 
-    // Print headers.
-    std::cout << "t,x,v,energy,x theory" << std::endl;
+    // Output headers.
+    out_file << "t,x,v,energy,x theory" << std::endl;
 
     for (uint32_t i = 1; i<= N; i++)
     {
@@ -85,7 +99,7 @@ int main()
         int status;
 
         t = (i * T_LIMIT) / N;
-        
+
         // TODO understand why this needs t_0
         status = gsl_odeiv2_driver_apply(driver, &t_0, t, x);
         if (status != GSL_SUCCESS)
@@ -93,20 +107,22 @@ int main()
             std::cout << "Error, step " << i << " failed with return code = " << status << std::endl;
             break;
         }
-    
+
         // Output data every 100 steps.
         if (i % 100 == 0)
         {
-            print_values(x, t, AMPLITUDE);
+            output_values(out_file, x, t, AMPLITUDE);
         }
     }
 
+    std::cout << "Done" << std::endl;
+
     gsl_odeiv2_driver_free(driver);
-    
+
     return 0;
 }
 
-void print_values(double *x, double t, double amplitude)
+void output_values(std::ofstream &out_file, double *x, double t, double amplitude)
 {
     double energy;
     double x_theory;
@@ -115,9 +131,9 @@ void print_values(double *x, double t, double amplitude)
     energy = 0.5 * x[1] * x[1] + 1 - cos(x[0]);
 
     // Calculate theoretical value of SHM for undamped free oscillations
-    x_theory = amplitude * cos(t);	  
+    x_theory = amplitude * cos(t);
 
-    std::cout << t << "," << x[0] << "," << x[1] << 
-                 "," << energy << "," << x_theory << std::endl;
+    out_file << t << "," << x[0] << "," << x[1] <<
+             "," << energy << "," << x_theory << std::endl;
 }
 
