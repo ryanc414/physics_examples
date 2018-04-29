@@ -49,3 +49,10 @@ Simulate a driven pendulum by numerically solving a pair of ODEs
 representing the dynamics of the system. CSV data is output to file,
 from which the pendulum motion can be plotted.
 
+bin/fft
+-------
+Numerically calculate the far-field diffraction pattern of a slit
+aperture, using the FFTW library to calculate the Fourier transform.
+CSV data is output to file, from which the diffraction pattern can
+be plotted.
+
