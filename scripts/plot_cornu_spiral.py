@@ -7,6 +7,9 @@ import subprocess
 import csv_reader as csv
 
 
+OUT_FILENAME = "data/cornu.csv"
+
+
 def plot_cornu_spiral():
     """Plot the Cornu spiral as a line graph."""
     c_vals, s_vals = calculate_values()
@@ -23,10 +26,12 @@ def calculate_values():
     # Find the location of the binary relative to this script.
     binpath = (os.path.dirname(os.path.realpath(__file__))
                + "/../bin/fresnel_example")
-    raw_output = subprocess.check_output([binpath]).strip().decode("ascii")
+    subprocess.check_call([binpath, "-f", OUT_FILENAME])
 
     # Process the output - extract just the C and S integral values.
-    val_map = csv.to_val_map(raw_output.split('\n'))
+    with open(OUT_FILENAME, "r") as f:
+        val_map = csv.to_val_map(f.readlines())
+
     return np.array(val_map["c value"]), np.array(val_map["s value"])
 
 

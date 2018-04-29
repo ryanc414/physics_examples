@@ -7,6 +7,12 @@ required to link against.
 Plots of the values calculated can then be viewed by running one of the
 scripts/plot... python wrappers.
 
+Scripts
+=======
+scripts/plot_cornu_spiral.py
+----------------------------
+Plots the Cornu spiral by numerically integrating the Fresnel integrals.
+
 `make` targets:
 ===============
 
