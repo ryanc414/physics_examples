@@ -13,6 +13,10 @@ scripts/plot_cornu_spiral.py
 ----------------------------
 Plots the Cornu spiral by numerically integrating the Fresnel integrals.
 
+scripts/plot_diffraction.py
+---------------------------
+Plot near-field diffraction patterns from different sized appertures.
+
 `make` targets:
 ===============
 
