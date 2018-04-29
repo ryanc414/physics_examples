@@ -6,6 +6,7 @@
 #include <fstream>
 #include <cstdint>
 #include <cerrno>
+#include "out_file.hh"
 
 #define PI 3.14159265359
 #define N 1000000
@@ -64,7 +65,7 @@ int jac(double t, const double *x, double *dfdy, double *dfdt, void *vparams)
     return GSL_SUCCESS;
 }
 
-int main()
+int main(int argc, char **argv)
 {
     ParamsContainer params = {.q = Q, .f = F, .omega = OMEGA};
     double t_0 = 0.0;
@@ -74,12 +75,8 @@ int main()
     gsl_odeiv2_system sys;
     gsl_odeiv2_driver *driver;
     std::ofstream out_file;
-    std::string out_filename;
 
-    std::cout << "Enter output filename: " << std::endl;
-    std::cin >> out_filename;
-
-    out_file.open(out_filename.c_str(), std::ios::out);
+    open_outfile(out_file, argc, argv);
     if (!out_file.is_open())
     {
       std::cerr << "Error, could not open specified file." << std::endl;
