@@ -27,3 +27,9 @@ bin/fresnel_example
 Integrate the Fresnel integrals numerically. CSV data is output to file,
 from which a Cornu spiral can be plotted.
 
+bin/fresnel_diffraction
+-----------------------
+Apply Fresnel integrals to near-field diffraction of various sized
+appertures. CSV data is output to files under data/ from which
+diffraction patterns can be plotted.
+

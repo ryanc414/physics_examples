@@ -1,6 +1,3 @@
-#include <vector>
-#include <fstream>
-#include <string>
 #include "fresnel.hh"
 
 #define SCREEN_DISTANCE 10.0
@@ -30,7 +27,7 @@ void calculate_amplitude_and_phase(double &amplitude,
     ESTIMATE psi[2];
     std::vector<double> u_limits(2);
     double scale = sqrt(2 / (LAMBDA * slit_width));
-  
+
     u_limits[0] = ((-0.5 * SCREEN_DISTANCE) + x_pos) * scale;
     u_limits[1] = ((0.5 * SCREEN_DISTANCE) + x_pos) * scale;
 
@@ -59,7 +56,7 @@ void calculate_diffraction(double slit_width,
     std::ofstream file;
     file.open(filename.c_str());
     file << "x,amplitude,phase\n";
-    
+
     // Evaluate integral at x = 0 and stores amplitude and phase for normalisation.
     calculate_amplitude_and_phase(amplitude0, phase0, 0, slit_width, workspace);
 
@@ -89,6 +86,8 @@ int main()
     calculate_diffraction(30, "data/30cm_diffraction.csv", workspace);
     calculate_diffraction(50, "data/50cm_diffraction.csv", workspace);
     calculate_diffraction(100, "data/100cm_diffraction.csv", workspace);
+
+    std::cout << "Data output to data/*cm_diffraction.csv" << std::endl;
 
     gsl_integration_workspace_free(workspace);
 

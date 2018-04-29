@@ -6,6 +6,7 @@
 #include <vector>
 #include <assert.h>
 #include <cerrno>
+#include <string>
 #include "estimate.hh"
 
 #define PI 3.14159265359
