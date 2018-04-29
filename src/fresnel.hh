@@ -1,9 +1,11 @@
 // Header file for Fresnel integral numerical solver
 #include <iostream>
+#include <fstream>
 #include <cmath>
 #include <gsl/gsl_integration.h>
 #include <vector>
 #include <assert.h>
+#include <cerrno>
 #include "estimate.hh"
 
 #define PI 3.14159265359

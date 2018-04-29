@@ -21,3 +21,9 @@ With all integration variables taking values from 0 to S = pi/8.
 
 Uses Monte-Carlo estimation to sample pseudo-random points over the 8D
 integral space and provide an estimate for the integral value and error.
+
+bin/fresnel_example
+-------------------
+Integrate the Fresnel integrals numerically. CSV data is output to file,
+from which a Cornu spiral can be plotted.
+
