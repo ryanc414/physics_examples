@@ -44,13 +44,8 @@ void calculate_diffraction(double slit_width,
                            const std::string &filename,
                            gsl_integration_workspace *workspace)
 {
-    double fraction;
-    double x_pos;
-    double amplitude;
-    double phase;
     double amplitude0;
     double phase0;
-    unsigned int i;
 
     // Create or open output file.
     std::ofstream file;
@@ -62,7 +57,13 @@ void calculate_diffraction(double slit_width,
 
     // For N values of x in the range -X_LIMIT to +X_LIMIT, evaluate the wavefunction
     // and amplitudes and output these values to file.
-    for (i = 0; i < N; i++) {
+    for (unsigned int i = 0; i < N; i++)
+    {
+        double fraction;
+        double x_pos;
+        double amplitude;
+        double phase;
+
         fraction = ((double) i) / N - 0.5;
         x_pos = 2 * fraction * X_LIMIT;
         calculate_amplitude_and_phase(amplitude, phase, x_pos, slit_width, workspace);
